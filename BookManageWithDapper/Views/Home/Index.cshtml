@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "查詢首頁";
+}
+
+<body>
+    <container id="app">
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>圖書類別▼</th>
+                        <th>書名▼</th>
+                        <th>購書日期▼</th>
+                        <th>借閱狀態▼</th>
+                        <th>借閱人▼</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in bookInfo" :key="item.bookId">
+                        <td>{{item.bookClassName}}</td>
+                        <td><a href="#" v-on:click="selectItem(item);editBook()" data-bs-toggle="modal" data-bs-target="#editModal">{{ item.BOOK_NAME }}</a></td>
+                        <td>{{ formatDateString(item.bookBoughtDate) }}</td>
+                        <td>{{item.codeName}}</td>
+                        <td>{{item.userEname}}</td>
+                        <td>
+                            <button v-on:click="selectItem(item)" data-bs-toggle="modal" data-bs-target="#editModal">編輯</button>
+                            <button v-on:click="selectItem(item);deleteBook()">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </container>
+</body>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                bookInfo: []
+            }
+        },
+        mounted() {
+            this.getdata();
+        },
+        methods: {
+            getdata() {
+                let _this = this;
+                fetch(`/api/BookManage/GetData`)
+                    .then(response => response.json())
+                    .then(data => {
+                        _this.bookInfo = data;
+                        console.log(data);
+                    })
+                    .catch(error => console.log(error));
+            },
+            formatDateString(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+
+            },
+            selectItem(item) {
+            },
+            editBook() {
+            },
+            deleteBook() {
+            }
+        }
+    }).mount('#app')
+</script>
